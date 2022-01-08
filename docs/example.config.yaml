@@ -1,0 +1,41 @@
+server:
+  address: ":8080"
+profiles:
+  - name: Oyster
+    triggers:
+      - effect: CO2
+        keepUnder: 100
+        overshoot: 10
+      - effect: HUMIDITY
+        keepOver: 92
+        overshoot: 4
+    prefer:
+      - CO2
+      - HUMIDITY
+sampling_interval: 30s  
+fruiting_chambers:
+  - name: Martha Tent
+    id: dead-beef
+    profile: Oyster
+    sensors:
+      - type: BME280
+        I2C: I2C1
+      - type: MAX6675
+      - type: SYNTHETIC
+        synthetic:
+          id: dead-beef
+          interval: 15m
+          duration: 5m
+          effect: CO2
+          values:
+            idle: 0
+            active: 100
+    controls:
+      - name: FAE Fan
+        type: NORMALLY_OPEN_RELAY
+        pin: 22
+        effect: CO2
+      - name: Bucket Fogger
+        type: NORMALLY_OPEN_RELAY
+        pin: 23
+        effect: HUMIDITY
