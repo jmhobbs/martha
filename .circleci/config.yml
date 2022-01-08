@@ -2,20 +2,21 @@ version: 2.1
 jobs:
   lint:
     docker:
-      - image: cimg/go:1.17
+      - image: golangci/golangci-lint:latest
     steps:
       - checkout
-      - run: curl -sL https://github.com/golangci/golangci-lint/releases/download/v1.43.0/golangci-lint-1.43.0-linux-amd64.tar.gz | tar xz
-      - run: golangci-lint-1.43.0-linux-amd64/golangci-lint run
+      - run: go mod download
+      - run: golangci-lint run -v
   test:
     docker:
       - image: cimg/go:1.17
     steps:
       - checkout
-      - run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+      - run: go mod download
+      - run: go test -v -timeout 60s -race -coverprofile=coverage.txt -covermode=atomic ./...
       - run: bash <(curl -s https://codecov.io/bash)
 workflows:
-  test_and_lint:
+  build:
     jobs:
-      - test
       - lint
+      - test
