@@ -42,9 +42,17 @@ func NewManager(parentLogger zerolog.Logger, config *configuration.Config) (*Man
 		return nil, fmt.Errorf("Unable to initialize host: %w", err)
 	}
 
-	var m *Manager = new(Manager)
-	m.logger = parentLogger.With().Str("component", "hardware.Manager").Logger()
-	return m, m.configure(config)
+	m := &Manager{
+		logger: parentLogger.With().Str("component", "hardware.Manager").Logger(),
+		i2cDevices: make(map[string]i2cDevice),
+		spiDevices: make(map[string]spiDevice),
+		relays: make(map[string]*device.Relay),
+	}
+	err = m.configure(config)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // todo: error capture/handling
