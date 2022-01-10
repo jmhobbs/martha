@@ -9,6 +9,7 @@ func DefaultConfig() *Config {
 				// todo
 			},
 		},
+		SamplingInterval: "60s",
 		FruitingChambers: []FruitingChamber{
 			{
 				ID: "default",
